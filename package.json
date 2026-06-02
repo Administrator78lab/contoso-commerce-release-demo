@@ -1,0 +1,30 @@
+{
+  "name": "contoso-commerce",
+  "version": "2.4.0",
+  "private": true,
+  "description": "Contoso Commerce storefront and order orchestration platform",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "eslint src",
+    "migrate:up": "node scripts/migrate.js up",
+    "migrate:down": "node scripts/migrate.js down"
+  },
+  "dependencies": {
+    "axios": "0.21.1",
+    "express": "4.17.1",
+    "lodash": "4.17.19",
+    "minimist": "1.2.5",
+    "jsonwebtoken": "8.5.1",
+    "node-fetch": "2.6.1",
+    "semver": "5.7.1",
+    "tough-cookie": "2.5.0",
+    "pg": "8.7.1"
+  },
+  "devDependencies": {
+    "eslint": "8.57.0"
+  }
+}
