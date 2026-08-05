@@ -1,0 +1,53 @@
+name: Release Gate
+
+on:
+  push:
+    branches: ["release/**"]
+  pull_request:
+    branches: ["release/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration-tests:
+    name: Integration and performance gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Integration suite
+        run: |
+          echo "Running integration suite against the staging environment..."
+          echo "  checkout::split-tender ......... PASS"
+          echo "  checkout::idempotency .......... PASS"
+          echo "  checkout::guest-no-nexus ....... PASS"
+          echo "  payments::3ds2-challenge ....... PASS"
+          echo "  payments::split-tender-refund .. FAIL (not implemented)"
+          echo "  cart::server-side-merge ........ PASS"
+          echo "  catalog::inventory-cache ....... FAIL (stale reads)"
+          echo "::error::2 of 74 integration tests failed"
+
+      - name: Performance gate
+        run: |
+          echo "Load profile: 1500 rps sustained, 10 minutes"
+          echo "checkout p99 = 912ms (SLO 800ms)"
+          echo "::error::Performance gate failed: p99 912ms exceeds SLO 800ms"
+
+      - name: Coverage gate
+        run: |
+          echo "Unit test coverage 78.4% (threshold 80.0%)"
+          echo "::error::Coverage gate failed"
+
+      - name: Fail the gate
+        run: |
+          echo "Release gate FAILED - contoso-commerce 2.4.0 is not eligible for production deployment."
+          exit 1
+
+  sign-manifest:
+    name: Sign release manifest
+    needs: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skipped because the release gate failed."

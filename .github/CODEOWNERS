@@ -1,0 +1,7 @@
+# Contoso Commerce code owners
+*                           @Administrator78lab
+/src/services/checkout/     @Administrator78lab
+/src/services/payments/     @Administrator78lab
+/docs/                      @Administrator78lab
+/release-manifest.json      @Administrator78lab
+/.github/workflows/         @Administrator78lab
