@@ -1,0 +1,148 @@
+{
+  "$schema": "https://contoso.com/schemas/release-manifest/v2.json",
+  "release": {
+    "name": "contoso-commerce",
+    "version": "2.4.0",
+    "codename": "Northwind",
+    "channel": "production",
+    "releaseBranch": "release/v2.4",
+    "cutDate": "2026-08-28",
+    "plannedDeploymentDate": "2026-09-11T02:00:00Z",
+    "deploymentWindowMinutes": 120,
+    "freezeWindow": {
+      "start": "2026-09-10T18:00:00Z",
+      "end": "2026-09-11T06:00:00Z"
+    }
+  },
+  "approvals": {
+    "releaseManager": {
+      "name": "Priya Nandakumar",
+      "email": "priya.nandakumar@contoso.com",
+      "status": "pending"
+    },
+    "engineeringManager": {
+      "name": "Daniel Okafor",
+      "email": "daniel.okafor@contoso.com",
+      "status": "approved",
+      "approvedAt": "2026-09-08T11:20:00Z"
+    },
+    "security": {
+      "name": "Mei Tanaka",
+      "email": "mei.tanaka@contoso.com",
+      "status": "changes-requested",
+      "note": "Blocked on open Dependabot critical and unresolved code scanning finding."
+    },
+    "qa": {
+      "name": "Arjun Rao",
+      "email": "arjun.rao@contoso.com",
+      "status": "approved-with-conditions",
+      "note": "UAT pass rate 91.3%; 4 open defects, 1 severity-1."
+    },
+    "businessOwner": {
+      "name": "Elena Vasquez",
+      "email": "elena.vasquez@contoso.com",
+      "status": "pending"
+    }
+  },
+  "components": [
+    {
+      "name": "checkout-api",
+      "version": "2.4.0",
+      "image": "contosoacr.azurecr.io/checkout-api:2.4.0",
+      "digest": "sha256:9f2c1ab34d5e6f7089abcdef1234567890fedcba9876543210abcdef12345678",
+      "signed": true
+    },
+    {
+      "name": "payments-gateway",
+      "version": "2.4.0",
+      "image": "contosoacr.azurecr.io/payments-gateway:2.4.0",
+      "digest": "sha256:1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809",
+      "signed": true
+    },
+    {
+      "name": "catalog-api",
+      "version": "2.4.0",
+      "image": "contosoacr.azurecr.io/catalog-api:2.4.0",
+      "digest": "sha256:abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      "signed": true
+    },
+    {
+      "name": "cart-service",
+      "version": "2.4.0",
+      "image": "contosoacr.azurecr.io/cart-service:2.4.0",
+      "digest": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0",
+      "signed": false,
+      "note": "Unsigned build produced by the failed release-gate run; must be rebuilt before deployment."
+    },
+    {
+      "name": "storefront-web",
+      "version": "2.4.0",
+      "image": "contosoacr.azurecr.io/storefront-web:2.4.0",
+      "digest": "sha256:5566778899aabbccddeeff00112233445566778899aabbccddeeff0011223344",
+      "signed": true
+    }
+  ],
+  "databaseMigrations": [
+    {
+      "id": "20260829_add_split_tender_tables",
+      "reversible": true,
+      "estimatedDurationSeconds": 45
+    },
+    {
+      "id": "20260902_cart_merge_index",
+      "reversible": true,
+      "estimatedDurationSeconds": 210
+    },
+    {
+      "id": "20260905_order_idempotency_keys",
+      "reversible": false,
+      "estimatedDurationSeconds": 620,
+      "warning": "Non-reversible migration. Rollback past this point requires a point-in-time restore. See docs/rollback-runbook.md section 4."
+    }
+  ],
+  "featureFlags": [
+    {
+      "key": "checkout.splitTender",
+      "defaultState": "off",
+      "rolloutPlan": "5% -> 25% -> 100% over 72h"
+    },
+    {
+      "key": "cart.serverSideMerge",
+      "defaultState": "on",
+      "rolloutPlan": "100% at deploy"
+    },
+    {
+      "key": "payments.threeDSecure22",
+      "defaultState": "off",
+      "rolloutPlan": "EU markets only, 10% canary"
+    }
+  ],
+  "dependencies": {
+    "notification-service": ">=1.9.0",
+    "avalara-tax-adapter": ">=3.2.1",
+    "identity-service": ">=4.0.0"
+  },
+  "qualityGates": {
+    "unitTestCoveragePercent": 78.4,
+    "unitTestCoverageThreshold": 80.0,
+    "integrationTestsPassed": false,
+    "loadTestP99Ms": 912,
+    "loadTestP99SloMs": 800,
+    "openCriticalVulnerabilities": 1,
+    "openHighVulnerabilities": 3,
+    "uatPassRatePercent": 91.3,
+    "uatPassRateThreshold": 95.0
+  },
+  "rollback": {
+    "strategy": "blue-green with traffic shift",
+    "runbook": "docs/rollback-runbook.md",
+    "script": "scripts/rollback.ps1",
+    "estimatedRtoMinutes": 18,
+    "lastRehearsed": "2026-07-22",
+    "rehearsalResult": "passed",
+    "previousStableVersion": "2.3.2"
+  },
+  "generatedBy": "release-gate.yml",
+  "generatedAt": "2026-09-09T22:14:07Z",
+  "signature": "UNSIGNED - release gate workflow failed"
+}
