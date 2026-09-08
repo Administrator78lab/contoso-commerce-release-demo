@@ -42,11 +42,27 @@ async function authorizeSplitTender({ gatewayUrl, giftCard, card, correlationId 
 
   const cardResult = await authorize({ gatewayUrl, amountMinor: card.amountMinor, currency: card.currency, token: card.token, correlationId });
   if (!cardResult.authorized) {
-    // TODO: void the gift card authorization here. Currently manual.
-    return cardResult;
+    // Compensating action: void the gift card authorization so the customer is
+    // not left with a held balance when the card leg is refused.
+    try {
+      await voidAuthorization({ gatewayUrl, pspReference: giftCardResult.pspReference, correlationId });
+      return { ...cardResult, giftCardVoided: true };
+    } catch (voidError) {
+      // Escalate: a stranded gift-card hold requires manual reconciliation.
+      return { ...cardResult, giftCardVoided: false, requiresManualReconciliation: true };
+    }
   }
 
   return { authorized: true, references: [giftCardResult.pspReference, cardResult.pspReference] };
 }
 
-module.exports = { authorize, authorizeSplitTender };
+async function voidAuthorization({ gatewayUrl, pspReference, correlationId }) {
+  const response = await axios.post(
+    `${gatewayUrl}/v1/payments/${pspReference}/void`,
+    {},
+    { headers: { 'x-correlation-id': correlationId }, timeout: 4000 }
+  );
+  return { voided: response.data.status === 'received' };
+}
+
+module.exports = { authorize, authorizeSplitTender, voidAuthorization };
