@@ -30,8 +30,8 @@
 |---|---|---|
 | Split-tender refunds must be processed manually | High | Deferred to 2.4.1 |
 | Checkout p99 latency 912ms vs 800ms SLO above 1,200 rps | Critical | Open - release blocker |
-| axios SSRF advisory only partially remediated | High | Open |
-| Hardcoded database credential removed but not rotated | High | Open |
+| axios SSRF advisory remediated by bumping to 1.7.7 - re-scan pending | Medium | In review |
+| Hardcoded database credential removed and rotated 2026-09-09 | Low | Closed |
 
 ## Release readiness
 
