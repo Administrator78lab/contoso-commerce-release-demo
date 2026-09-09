@@ -30,8 +30,8 @@
 |---|---|---|
 | Split-tender refunds must be processed manually | High | Deferred to 2.4.1 |
 | Checkout p99 latency 912ms vs 800ms SLO above 1,200 rps | Critical | Open - release blocker |
-| axios SSRF advisory only partially remediated | High | Open |
-| Hardcoded database credential removed but not rotated | High | Open |
+| axios SSRF advisory still open - Dependabot PR not merged | Critical | Open - release blocker |
+| Hardcoded database credential still present in config/database.js | High | Open - awaiting rotation |
 
 ## Release readiness
 
