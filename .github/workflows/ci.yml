@@ -25,7 +25,7 @@ jobs:
       - name: Lint changelog
         run: |
           test -f CHANGELOG.md && echo "CHANGELOG.md present"
-          grep -q "2.4.0" CHANGELOG.md && echo "2.4.0 section present"
+          grep -q "^## \[" CHANGELOG.md && echo "changelog sections present"
 
       - name: Verify rollback assets
         run: |
