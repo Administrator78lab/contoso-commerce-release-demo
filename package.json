@@ -22,7 +22,7 @@
     "node-fetch": "2.6.1",
     "semver": "5.7.1",
     "tough-cookie": "2.5.0",
-    "pg": "8.7.1"
+    "pg": "8.23.0"
   },
   "devDependencies": {
     "eslint": "8.57.0"
