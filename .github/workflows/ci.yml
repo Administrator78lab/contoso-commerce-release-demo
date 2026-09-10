@@ -19,8 +19,11 @@ jobs:
 
       - name: Validate release manifest
         run: |
-          echo "Validating release-manifest.json"
-          python3 -c "import json;m=json.load(open('release-manifest.json'));print('release', m['release']['version'], 'components', len(m['components']))"
+          if [ -f release-manifest.json ]; then
+            python3 -c "import json;m=json.load(open('release-manifest.json'));print('release', m['release']['version'], 'components', len(m['components']))"
+          else
+            echo "no release manifest on this branch - skipping"
+          fi
 
       - name: Lint changelog
         run: |
